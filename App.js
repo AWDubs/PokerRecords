@@ -25,12 +25,3 @@ const AppStackNavigator = createStackNavigator({
 //Contains the app navigation variable,
 //using a navigator variable
 const AppContainer = createAppContainer(AppStackNavigator);
-
-// class AppNavigation extends React.Component {
-//   constructor(props) {
-//     super(props);
-//   }
-//   render() {
-//     return <AppContainer screenProps={this.props} />
-//   }
-// }
