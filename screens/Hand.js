@@ -2,10 +2,24 @@ import React from 'react';
 import { StyleSheet, View, Text, Button, ScrollView, FlatList} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
-export function HandObject(_name) {
-    this.name = _name
+export function HandObject(_id, _mycards, _stack, _blinds, _position,
+                           _flopcards, _turncard, _rivercard, _opponentscards,
+                           _notes, _preflopaction, _flopaction, _turnaction, _riveraction) {
+    this.Id =             _id,
+    this.MyCards =          _mycards,
+    this.Stack =            _stack,
+    this.Blinds =           _blinds,
+    this.Position =         _position,
+    this.FlopCards =        _flopcards,
+    this.TurnCard =         _turncard,
+    this.RiverCard =        _rivercard,
+    this.OpponentsCards =   _opponentscards,
+    this.Notes =            _notes,
+    this.PreFlopAction =    _preflopaction,
+    this.FlopAction =       _flopaction,
+    this.TurnAction =       _turnaction,
+    this.RiverAction =      _riveraction
 }
-var defaultHand = new HandObject("default");
 
 
 export default class Hand extends React.Component {
@@ -15,20 +29,7 @@ export default class Hand extends React.Component {
         ),
       };
   state = {
-    Session: this.props.navigation.getParam('Session', "defaultSession"),
-    HandNumber: this.props.navigation.getParam('Hand', defaultHand),
-    MyCards : [0, 0],
-    Stack: 0,
-    Blinds: [0, 0],
-    Position: "Default",
-    FlopCards: [0, 0, 0],
-    TurnCard: 0,
-    RiverCard: 0,
-    Notes: "Notes",
-    PreFlopAction: [],
-    FlopAction: [],
-    TurnAction: [],
-    RiverAction: [],
+    Hand: this.props.navigation.getParam('Hand'),
   }
   render() {
       return (
@@ -41,6 +42,7 @@ export default class Hand extends React.Component {
                 { this.Flop() }
                 { this.Turn() }
                 { this.River() }
+                { this.OpponentsHand() }
                 { this.Notes() }
             </ScrollView>
           </View>
@@ -51,8 +53,8 @@ export default class Hand extends React.Component {
         return (
             <View>
                 <View style={styles.header}>
-                    <Text>Session {this.state.Session.name}</Text>
-                    <Text>Hand {this.state.HandNumber}</Text>
+                    <Text>Session {this.props.navigation.state.params.SessionName}</Text>
+                    <Text>Hand {this.state.Hand.Id}</Text>
                 </View>
                 { this.LineDivider() }
             </View>
@@ -78,11 +80,11 @@ export default class Hand extends React.Component {
             <View>
                 <View style={styles.horizontal}>
                     <Text>PreFlop: </Text>
-                    <Button title="+Action" onPress={() => this.AddPreFlopAction("new action") } />
+                    <Button title="+Action" onPress={() => this.AddAction("PreFlop") } />
                 </View>
                 <View style={styles.horizontal}>
                     <FlatList
-                        data={this.state.PreFlopAction}
+                        data={this.state.Hand.PreFlopAction}
                         renderItem={({item}) => this.DisplayAction(item)}
                         keyExtractor={(item, index) => index.toString()}
                     />
@@ -96,10 +98,14 @@ export default class Hand extends React.Component {
             <View>
                 <View style={styles.horizontal}>
                     <Text>Flop: </Text>
-                    <Button title="+Action" onPress={() => this.addItem() } />
+                    <Button title="+Action" onPress={() => this.AddAction("Flop") } />
                 </View>
                 <View style={styles.horizontal}>
-                
+                    <FlatList
+                            data={this.state.Hand.FlopAction}
+                            renderItem={({item}) => this.DisplayAction(item)}
+                            keyExtractor={(item, index) => index.toString()}
+                        />
                 </View>
                 { this.LineDivider() }
             </View>
@@ -110,10 +116,14 @@ export default class Hand extends React.Component {
             <View>
                 <View style={styles.horizontal}>
                     <Text>Turn: </Text>
-                    <Button title="+Action" onPress={() => this.addItem() } />
+                    <Button title="+Action" onPress={() => this.AddAction("Turn") } />
                 </View>
                 <View style={styles.horizontal}>
-                
+                    <FlatList
+                        data={this.state.Hand.TurnAction}
+                        renderItem={({item}) => this.DisplayAction(item)}
+                        keyExtractor={(item, index) => index.toString()}
+                        />
                 </View>
                 { this.LineDivider() }
             </View>
@@ -124,15 +134,29 @@ export default class Hand extends React.Component {
             <View>
                 <View style={styles.horizontal}>
                     <Text>River: </Text>
-                    <Button title="+Action" onPress={() => this.addItem() } />
+                    <Button title="+Action" onPress={() => this.AddAction("River") } />
                 </View>
                 <View style={styles.horizontal}>
-                
+                    <FlatList
+                        data={this.state.Hand.RiverAction}
+                        renderItem={({item}) => this.DisplayAction(item)}
+                        keyExtractor={(item, index) => index.toString()}
+                    />
                 </View>
                 { this.LineDivider() }
             </View>
         );
     }
+    OpponentsHand = () => {
+        return (
+            <View>
+                <View style={styles.horizontal}>
+                    <Text>Opponents Hand: </Text>
+                </View>
+                { this.LineDivider() }
+            </View>
+        );
+    };
     Notes = () => {
         return (
             <View>
@@ -152,34 +176,65 @@ export default class Hand extends React.Component {
             />
         );
     }
+    componentDidUpdate() {
+        this.props.navigation.state.params.updateMethod(this.state.Hand); //update store
+    }
     DisplayAction = (action) => {
         return (
             <Text>{action}</Text>
         );
     }
-    AddPreFlopAction = (preFlopAction) => {
-        this.setState((state, props) => ({
-            Session: state.Session,
-            HandNumber: state.HandNumber,
-            MyCards : state.MyCards,
-            Stack: state.Stack,
-            Blinds: state.Blinds,
-            Position: state.Position,
-            FlopCards: state.FlopCards,
-            TurnCard: state.TurnCard,
-            RiverCard: state.RiverCard,
-            Notes: state.Notes,
-            PreFlopAction: [...state.PreFlopAction, preFlopAction],
-            FlopAction: state.FlopAction,
-            TurnAction: state.TurnAction,
-            RiverAction: state.RiverAction,
-        }));
+    AddAction = (type) => {
+        var action = this.GetActionString();
+        switch (type) {
+            case "PreFlop":
+                    this.setState((state, props) => ({
+                        ...state,
+                        Hand: {
+                            ...state.Hand,
+                            PreFlopAction: [...state.Hand.PreFlopAction, action],
+                        }
+                    }));
+                break;
+            case "Flop":
+                    this.setState((state, props) => ({
+                        ...state,
+                        Hand: {
+                            ...state.Hand,
+                            FlopAction: [...state.Hand.FlopAction, action],
+                        }
+                    }));
+                break;
+            case "Turn":
+                    this.setState((state, props) => ({
+                        ...state,
+                        Hand: {
+                            ...state.Hand,
+                            TurnAction: [...state.Hand.TurnAction, action],
+                        }
+                    }));
+                break;
+            case "River":
+                    this.setState((state, props) => ({
+                        ...state,
+                        Hand: {
+                            ...state.Hand,
+                            RiverAction: [...state.Hand.RiverAction, action],
+                        }
+                    }));
+                break;
+        }
+    };
+    
+    GetActionString = () => {
+        return "new action";
     };
 }
 
 function Save()
 {
-    //save and return
+    //just return. 
+    //use auto-save
 }
 
 const styles = StyleSheet.create({

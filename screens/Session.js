@@ -2,18 +2,17 @@ import React from 'react';
 import { StyleSheet, View, Text, Button, Alert, FlatList} from 'react-native';
 import { HandObject } from './Hand';
 
-export function SessionObject(_name, _hands) {
-    this.name = _name,
-    this.hands = _hands
+export function SessionObject(_id, _name, _hands) {
+    this.Id = _id, //int
+    this.Name = _name, //string
+    this.HandList = _hands //array of HandObject objects
 }
-var defaultSession = new SessionObject("default", []);
+var defaultSession = new SessionObject(0, "default", []);
 
 
 export default class Session extends React.Component {
   state = {
-    Session: this.props.navigation.getParam('Session', defaultSession),
-    HandList : [],
-    HandCount : 1
+    Session: this.props.navigation.getParam('Session'),
   }
   render() {
       return (
@@ -28,41 +27,65 @@ export default class Session extends React.Component {
       );
     }
     addItem = () => {
+      var newHand = new HandObject(this.state.Session.HandList.length + 1,
+        [0, 0], 0, [0, 0], "", [0, 0, 0], 0, 0, [], "Notes", [], [], [], []);
         this.setState((state, props) => ({
-        HandList : [...state.HandList, new HandObject(state.HandCount)],
-        HandCount : state.HandCount + 1,
-        }));
+        Session : {
+          ...state.Session,
+          HandList: [...state.Session.HandList, newHand]
+        },
+        }))
+    };
+    componentDidUpdate() {
+      console.log(this.state.Session);
+        this.props.navigation.state.params.updateMethod(this.state.Session); //update store
     };
     SessionHeader = () => {
         return (
-            <Text>Session {this.state.Session.name}</Text>
+            <Text>Session {this.state.Session.Name}</Text>
         );
-    }
+    };
     SessionBody = () => {
         return (
             <View>
                 <Button title="Add new Hand" onPress={() => this.addItem() }></Button>
                 <FlatList
-                    data={this.state.HandList}
+                    data={this.state.Session.HandList}
                     renderItem={({item}) => this.HandComponent(item)}
                     keyExtractor={(item, index) => index.toString()}
                 />
             </View>
         );
-    }
+    };
     HandComponent = (hand) => {
-        const sessionName = this.state.Session.name;
         return (
           <View>
-            <Button title={'hand ' + hand.name.toString()} onPress={() => {
-              this.props.navigation.navigate('Hand', {
-                  Session: this.state.Session,
-                  Hand: hand.name,
-                });
-              }} />
+            <Button title={'hand ' + hand.Id.toString()}
+              onPress={() => { this.NavigateToNextScreen(hand) }} />
           </View>
         );
-      }
+      };
+    UpdateHand = (handToUpdate) => {
+        this.setState((state, props) => ({
+           ...state,
+           Session: {
+             ...state.Session,
+              HandList: state.Session.HandList.map((hand) => {
+              if (hand.Id === handToUpdate.Id) {
+                  return handToUpdate;
+              }
+              return hand;
+              })
+          }
+        }))
+    };
+    NavigateToNextScreen = (hand) => {
+      this.props.navigation.navigate('Hand', {
+        Hand: hand,
+        SessionName: this.state.Session.Name,
+        updateMethod: this.UpdateHand.bind(this),
+      });
+    };
 }
 
 const styles = StyleSheet.create({

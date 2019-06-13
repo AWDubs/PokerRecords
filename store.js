@@ -1,31 +1,38 @@
 import React from 'react';
 import { createStore } from 'redux';
-import { SessionObject } from './screens/Session';
 
-//var newSession1 = new SessionObject("Default", []);
 
 const initialState = {
-     currentSession: undefined,
-     SessionList: [],
-    //Count: 0,
+    NextId: 0,
+    SessionList: [],
 }
 
 export const reducer = (state = initialState, action) => {
     switch (action.type) {
-        case "ADD_SESSION":
+        case "ADD_SESSION": //pass a session as action.payload
             state = {
                 ...state,
-                currentSession: action.payload,
+                NextId: state.NextId + 1,
                 SessionList: [...state.SessionList, action.payload]
             };
             break;
-        case "ADD_HAND":
+        case "DELETE_SESSION": //pass a session as action.payload
             state = {
                 ...state,
-                
+                SessionList: state.SessionList.filter((session) => session.Id !== action.payload.Id)
             };
             break;
-        case "ADD_COUNT":
+        case "UPDATE_SESSION": //pass session as action.payload
+            state = {
+                ...state,
+                SessionList: state.SessionList.map((session) => {
+                if (session.Id === action.payload.Id) {
+                    return action.payload;
+                }
+
+                return session;
+                })
+            };
             break;
     }
     return state;
