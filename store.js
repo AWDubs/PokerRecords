@@ -13,7 +13,7 @@ export const reducer = (state = initialState, action) => {
             state = {
                 ...state,
                 NextId: state.NextId + 1,
-                SessionList: [...state.SessionList, action.payload]
+                SessionList: [action.payload, ...state.SessionList]
             };
             break;
         case "DELETE_SESSION": //pass a session as action.payload
@@ -41,3 +41,29 @@ export const reducer = (state = initialState, action) => {
 const store = createStore(reducer);
 
 export default store;
+
+/* 
+const mapStateToProps = (state) => {
+  return {
+    SessionList: state.SessionList,
+    NextId: state.NextId
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+      addSession: (newSession) => {
+        dispatch({
+          type: "ADD_SESSION",
+          payload: newSession
+        });
+      },
+      updateSession: (session) => {
+        dispatch({
+          type: "UPDATE_SESSION",
+          payload: session
+        });
+      }
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
+*/

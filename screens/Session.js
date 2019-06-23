@@ -9,7 +9,6 @@ export function SessionObject(_id, _name, _hands) {
 }
 var defaultSession = new SessionObject(0, "default", []);
 
-
 export default class Session extends React.Component {
   state = {
     Session: this.props.navigation.getParam('Session'),
@@ -28,7 +27,7 @@ export default class Session extends React.Component {
     }
     addItem = () => {
       var newHand = new HandObject(this.state.Session.HandList.length + 1,
-        [0, 0], 0, [0, 0], "", [0, 0, 0], 0, 0, [], "Notes", [], [], [], []);
+        ["000", "000"], 0, [0, 0], "", ["000", "000", "000"], "000", "000", ["000", "000"], "Notes", [], [], [], []);
         this.setState((state, props) => ({
         Session : {
           ...state.Session,
@@ -37,7 +36,6 @@ export default class Session extends React.Component {
         }))
     };
     componentDidUpdate() {
-      console.log(this.state.Session);
         this.props.navigation.state.params.updateMethod(this.state.Session); //update store
     };
     SessionHeader = () => {

@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, View, Text, Button, ScrollView, FlatList} from 'react-native';
+import { StyleSheet, View, Text, Button, ScrollView, FlatList, TouchableOpacity } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
+import Card from '../CardGrabber';
 
 export function HandObject(_id, _mycards, _stack, _blinds, _position,
                            _flopcards, _turncard, _rivercard, _opponentscards,
@@ -23,11 +24,11 @@ export function HandObject(_id, _mycards, _stack, _blinds, _position,
 
 
 export default class Hand extends React.Component {
-    static navigationOptions = {
+    static navigationOptions = ({navigation, screenProps}) => ({
         headerRight: (
-          <Button title="Save" onPress={() => Save() }/>
+          <Button title="Save" onPress={() => { navigation.goBack(null) } }/>
         ),
-      };
+      })
   state = {
     Hand: this.props.navigation.getParam('Hand'),
   }
@@ -63,8 +64,10 @@ export default class Hand extends React.Component {
     HandInfo = () => {
         return (
             <View>
-                <View style={styles.vertical}>
+                <View style={styles.horizontal}>
                     <Text>My Cards: </Text>
+                    { this.TouchableCard(this.state.Hand.MyCards[0], 'my_card1')}
+                    { this.TouchableCard(this.state.Hand.MyCards[1], 'my_card2')}
                 </View>
                 <View style={styles.vertical}>
                     <Text>Stack: </Text>
@@ -80,7 +83,7 @@ export default class Hand extends React.Component {
             <View>
                 <View style={styles.horizontal}>
                     <Text>PreFlop: </Text>
-                    <Button title="+Action" onPress={() => this.AddAction("PreFlop") } />
+                    <Button title="+Action" onPress={() => this.GetAction("PreFlop") } />
                 </View>
                 <View style={styles.horizontal}>
                     <FlatList
@@ -98,7 +101,10 @@ export default class Hand extends React.Component {
             <View>
                 <View style={styles.horizontal}>
                     <Text>Flop: </Text>
-                    <Button title="+Action" onPress={() => this.AddAction("Flop") } />
+                    { this.TouchableCard(this.state.Hand.FlopCards[0], 'flop1')}
+                    { this.TouchableCard(this.state.Hand.FlopCards[1], 'flop2')}
+                    { this.TouchableCard(this.state.Hand.FlopCards[2], 'flop3')}
+                    <Button title="+Action" onPress={() => this.GetAction("Flop") } />
                 </View>
                 <View style={styles.horizontal}>
                     <FlatList
@@ -116,7 +122,8 @@ export default class Hand extends React.Component {
             <View>
                 <View style={styles.horizontal}>
                     <Text>Turn: </Text>
-                    <Button title="+Action" onPress={() => this.AddAction("Turn") } />
+                    { this.TouchableCard(this.state.Hand.TurnCard, 'turn')}
+                    <Button title="+Action" onPress={() => this.GetAction("Turn") } />
                 </View>
                 <View style={styles.horizontal}>
                     <FlatList
@@ -134,7 +141,8 @@ export default class Hand extends React.Component {
             <View>
                 <View style={styles.horizontal}>
                     <Text>River: </Text>
-                    <Button title="+Action" onPress={() => this.AddAction("River") } />
+                    { this.TouchableCard(this.state.Hand.RiverCard, 'river')}
+                    <Button title="+Action" onPress={() => this.GetAction("River") } />
                 </View>
                 <View style={styles.horizontal}>
                     <FlatList
@@ -152,6 +160,8 @@ export default class Hand extends React.Component {
             <View>
                 <View style={styles.horizontal}>
                     <Text>Opponents Hand: </Text>
+                    { this.TouchableCard(this.state.Hand.OpponentsCards[0], 'opponent_card_1')}
+                    { this.TouchableCard(this.state.Hand.OpponentsCards[1], 'opponent_card_2')}
                 </View>
                 { this.LineDivider() }
             </View>
@@ -184,15 +194,14 @@ export default class Hand extends React.Component {
             <Text>{action}</Text>
         );
     }
-    AddAction = (type) => {
-        var action = this.GetActionString();
+    AddAction = (type, actionString) => {
         switch (type) {
             case "PreFlop":
                     this.setState((state, props) => ({
                         ...state,
                         Hand: {
                             ...state.Hand,
-                            PreFlopAction: [...state.Hand.PreFlopAction, action],
+                            PreFlopAction: [...state.Hand.PreFlopAction, actionString],
                         }
                     }));
                 break;
@@ -201,7 +210,7 @@ export default class Hand extends React.Component {
                         ...state,
                         Hand: {
                             ...state.Hand,
-                            FlopAction: [...state.Hand.FlopAction, action],
+                            FlopAction: [...state.Hand.FlopAction, actionString],
                         }
                     }));
                 break;
@@ -210,7 +219,7 @@ export default class Hand extends React.Component {
                         ...state,
                         Hand: {
                             ...state.Hand,
-                            TurnAction: [...state.Hand.TurnAction, action],
+                            TurnAction: [...state.Hand.TurnAction, actionString],
                         }
                     }));
                 break;
@@ -219,22 +228,129 @@ export default class Hand extends React.Component {
                         ...state,
                         Hand: {
                             ...state.Hand,
-                            RiverAction: [...state.Hand.RiverAction, action],
+                            RiverAction: [...state.Hand.RiverAction, actionString],
                         }
                     }));
                 break;
         }
     };
-    
-    GetActionString = () => {
-        return "new action";
+    OnCardClick = (type) => {
+        this.props.navigation.navigate('CardChanger', {
+            Type: type,
+            ChangeCard: this.ChangeCard.bind(this),
+          });
     };
-}
-
-function Save()
-{
-    //just return. 
-    //use auto-save
+    ChangeCard = (type, new_card_id) => {
+        switch (type) {
+            case 'my_card1':
+                    this.setState((state, props) => ({
+                        ...state,
+                        Hand: {
+                            ...state.Hand,
+                            MyCards: state.Hand.MyCards.map((card, index) => {
+                                    if (index === 0) {
+                                        return new_card_id;
+                                    }
+                                    return card; })}}));
+                break;
+            case 'my_card2':
+                    this.setState((state, props) => ({
+                        ...state,
+                        Hand: {
+                            ...state.Hand,
+                            MyCards: state.Hand.MyCards.map((card, index) => {
+                                    if (index === 1) {
+                                        return new_card_id;
+                                    }
+                                    return card; })}}));
+                break;
+            case 'flop1':
+                this.setState((state, props) => ({
+                    ...state,
+                    Hand: {
+                        ...state.Hand,
+                        FlopCards: state.Hand.FlopCards.map((card, index) => {
+                                if (index === 0) {
+                                    return new_card_id;
+                                }
+                                return card; })}}));
+                break;
+            case 'flop2':
+                    this.setState((state, props) => ({
+                        ...state,
+                        Hand: {
+                            ...state.Hand,
+                            FlopCards: state.Hand.FlopCards.map((card, index) => {
+                                    if (index === 1) {
+                                        return new_card_id;
+                                    }
+                                    return card; })}}));
+                break;
+            case 'flop3':
+                this.setState((state, props) => ({
+                    ...state,
+                    Hand: {
+                        ...state.Hand,
+                        FlopCards: state.Hand.FlopCards.map((card, index) => {
+                                if (index === 2) {
+                                    return new_card_id;
+                                }
+                                return card; })}}));
+                break;
+            case 'turn':
+                this.setState((state, props) => ({
+                    ...state,
+                    Hand: {
+                        ...state.Hand,
+                        TurnCard: new_card_id }}));
+                break;
+            case 'river':
+                this.setState((state, props) => ({
+                    ...state,
+                    Hand: {
+                        ...state.Hand,
+                        RiverCard: new_card_id }}));
+                break;
+            case 'opponent_card_1':
+                this.setState((state, props) => ({
+                    ...state,
+                    Hand: {
+                        ...state.Hand,
+                        OpponentsCards: state.Hand.OpponentsCards.map((card, index) => {
+                                if (index === 0) {
+                                    return new_card_id;
+                                }
+                                return card; })}}));
+                break;
+            case 'opponent_card_2':
+                this.setState((state, props) => ({
+                    ...state,
+                    Hand: {
+                        ...state.Hand,
+                        OpponentsCards: state.Hand.OpponentsCards.map((card, index) => {
+                                if (index === 1) {
+                                    return new_card_id;
+                                }
+                                return card; })}}));
+                break;
+        }
+    };
+    TouchableCard = (cardNumber, type) => {
+        return (
+            <View>
+                <TouchableOpacity
+                        onPress={() => this.OnCardClick(type) }>
+                            { Card(cardNumber) }
+                    </TouchableOpacity>
+            </View>
+        );
+    };
+    GetAction = (type) => {
+        this.props.navigation.navigate('GetAction', {
+            Type: type,
+            AddAction: this.AddAction.bind(this),
+          });
+    };
 }
 
 const styles = StyleSheet.create({

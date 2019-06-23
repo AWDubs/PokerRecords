@@ -5,6 +5,8 @@ import store from './store';
 import Home from './screens/Home';
 import Session from './screens/Session';
 import Hand from './screens/Hand';
+import GetAction from './screens/GetAction';
+import CardChanger from './screens/CardChanger';
 
 export default class App extends React.Component {
   render() {
@@ -20,6 +22,8 @@ const AppStackNavigator = createStackNavigator({
   Home: Home,
   Session: Session,
   Hand: Hand,
+  GetAction: GetAction,
+  CardChanger: CardChanger,
 })
 
 //Contains the app navigation variable,

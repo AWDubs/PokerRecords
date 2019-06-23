@@ -1,5 +1,6 @@
 {
     "cSpell.ignoreWords": [
+        "component",
         "flopaction",
         "flopcards",
         "mycards",
@@ -8,6 +9,8 @@
         "riveraction",
         "rivercard",
         "turnaction",
-        "turncard"
+        "turncard",
+        "unmount",
+        "will"
     ]
 }
