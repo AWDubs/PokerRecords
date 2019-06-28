@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, FlatList, TextInput} from 'react-native';
-import { Button, Card, CardItem, Right, DatePicker } from 'native-base';
+import { Card, CardItem, Right, DatePicker } from 'native-base';
+import { Button } from 'react-native-elements';
 import { HandObject } from './Hand';
 import _Card from '../CardGrabber';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -10,8 +11,8 @@ export function SessionObject(_id, _name, _hands) {
     this.Id = _id, //int
     this.Name = _name, //string
     this.HandList = _hands, //array of HandObject objects
-    this.Location = "location", //string
-    this.SessionDate = new Date().toLocaleDateString() //string
+    this.Location = "", //string
+    this.SessionDate = "" //string
 }
 var defaultSession = new SessionObject(0, "default", []);
 
@@ -23,8 +24,8 @@ export default class Session extends React.Component {
     Session: this.props.navigation.getParam('Session'),
     EditMode: false,
     Edit_Name: this.props.navigation.getParam('Session').Name,
-    Edit_Location: this.props.navigation.getParam('Session').Location,
-    Edit_Date: this.props.navigation.getParam('Session').SessionDate,
+    Edit_Location: "",
+    Edit_Date: "",
   }
   render() {
       return (
@@ -42,7 +43,7 @@ export default class Session extends React.Component {
     }
     addItem = () => {
       var newHand = new HandObject(this.state.Session.HandList.length + 1,
-        ["000", "000"], 0, [0, 0], "", ["000", "000", "000"], "000", "000", ["000", "000"], "Notes", [], [], [], []);
+        ["000", "000"], "0", ["0", "0"], "", ["000", "000", "000"], "000", "000", ["000", "000"], "Notes", [], [], [], []);
         this.setState((state, props) => ({
         Session : {
           ...state.Session,
@@ -59,8 +60,8 @@ export default class Session extends React.Component {
         return (
           <View style={{paddingLeft: 10, paddingTop: 10, paddingRight: 10}}>
             <View style={styles.horizontal}>
-                <View style={{alignSelf: 'flex-start', paddingLeft: 10}}>
-                    <Text style={styles.textStyle}>{this.state.Session.Name}</Text>
+                <View style={{alignSelf: 'flex-start'}}>
+                    <Text style={styles.textStyle}>Name: {this.state.Session.Name}</Text>
                 </View>
                 <View style={{alignSelf: 'flex-end', paddingRight: 10}}>
                   <AntIcon name="edit" color="blue" size={40} 
@@ -70,8 +71,8 @@ export default class Session extends React.Component {
                   })) } />
                 </View>
             </View>
-            <Text style={styles.textStyle}>{this.state.Session.Location}</Text>
-            <Text style={styles.textStyle}>{this.state.Session.SessionDate}</Text>
+            <Text style={styles.textStyle}>Location: {this.state.Session.Location}</Text>
+            <Text style={styles.textStyle}>Date: {this.state.Session.SessionDate}</Text>
           </View>
         );
       }
@@ -127,9 +128,7 @@ export default class Session extends React.Component {
               <Text style={styles.textStyle}>Hands: {this.state.Session.HandList.length}</Text>
             </View>
             <View style={{alignSelf: 'flex-end', paddingRight: 10}}>
-                <Button rounded info onPress={() => this.addItem() }>
-                  <Text style={{paddingLeft: 15, paddingRight: 15, fontSize: 20}}>New Hand</Text>
-                </Button>
+                <Button title="New Hand" onPress={() => this.addItem() } />
             </View>
         </View>
         );
@@ -241,5 +240,11 @@ const styles = StyleSheet.create({
   },
   textInput: {
     fontSize: 20,
+    backgroundColor: '#d3d3d3',
+    height: 40, 
+    width: "60%", 
+    borderColor: 'gray', 
+    borderWidth: 1, 
+    borderRadius: 10
   },
 });

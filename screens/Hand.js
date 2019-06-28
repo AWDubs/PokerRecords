@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Text, Button, ScrollView, FlatList, TouchableOpacity } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
+import { StyleSheet, View, Text, ScrollView, FlatList, TouchableOpacity, TextInput } from 'react-native';
+import { Button } from 'react-native-elements';
 import Card from '../CardGrabber';
 
 export function HandObject(_id, _mycards, _stack, _blinds, _position,
@@ -26,7 +26,7 @@ export function HandObject(_id, _mycards, _stack, _blinds, _position,
 export default class Hand extends React.Component {
     static navigationOptions = ({navigation, screenProps}) => ({
         headerRight: (
-          <Button title="Save" onPress={() => { navigation.goBack(null) } }/>
+          <Button buttonStyle={styles.btn} title="Save" onPress={() => { navigation.goBack(null) } }/>
         ),
       })
   state = {
@@ -54,8 +54,8 @@ export default class Hand extends React.Component {
         return (
             <View>
                 <View style={styles.header}>
-                    <Text>Session {this.props.navigation.state.params.SessionName}</Text>
-                    <Text>Hand {this.state.Hand.Id}</Text>
+                    <Text style={styles.txt}>Session {this.props.navigation.state.params.SessionName}</Text>
+                    <Text style={styles.txt}>Hand {this.state.Hand.Id}</Text>
                 </View>
                 { this.LineDivider() }
             </View>
@@ -65,14 +65,78 @@ export default class Hand extends React.Component {
         return (
             <View>
                 <View style={styles.horizontal}>
-                    <Text>My Cards: </Text>
-                    { this.TouchableCard(this.state.Hand.MyCards[0], 'my_card1')}
-                    { this.TouchableCard(this.state.Hand.MyCards[1], 'my_card2')}
+                    <Text style={styles.txt}>My Cards: </Text>
+                    <View style={styles.horizontal}>
+                        { this.TouchableCard(this.state.Hand.MyCards[0], 'my_card1')}
+                        { this.TouchableCard(this.state.Hand.MyCards[1], 'my_card2')}
+                    </View>
                 </View>
-                <View style={styles.vertical}>
-                    <Text>Stack: </Text>
-                    <Text>Blinds: </Text>
-                    <Text>Position: </Text>
+                <View style={styles.horizontal}>
+                    <Text style={styles.txt}>Stack: {this.state.Hand.Stack.toString()}</Text>
+                        <View style={styles.numberInput}>
+                            <TextInput 
+                                keyboardType='numeric'
+                                onEndEditing={(text)=> {
+                                    var newStack = text.nativeEvent.text;
+                                    if (text.nativeEvent.text != null) {
+                                        this.setState((state, props) => ({
+                                        ...state,
+                                        Hand: {
+                                            ...state.Hand,
+                                            Stack: newStack,
+                                        }}));
+                                    }
+                                    }}
+                                ref={input => { this.textInput = input }}
+                                />
+                        </View>
+                </View>
+                <View style={styles.horizontal}>
+                    <Text style={styles.txt}>Blinds: {this.state.Hand.Blinds[0]}/{this.state.Hand.Blinds[1]}</Text>
+                        <View style={styles.numberInput}>
+                            <TextInput 
+                                keyboardType='numeric'
+                                onEndEditing={(text)=> {
+                                    var newBlind = text.nativeEvent.text;
+                                    this.setState((state, props) => ({
+                                    ...state,
+                                    Hand: {
+                                        ...state.Hand,
+                                        Blinds: state.Hand.Blinds.map((b, index) => {
+                                            if (index == 0) {
+                                                return newBlind;
+                                            } 
+                                            return b;
+                                        })
+                                    }}));
+                                    }}
+                                ref={input => { this.textInput = input }}
+                                />
+                        </View>
+                        <Text style={styles.txt}>/</Text>
+                        <View style={styles.numberInput}>
+                            <TextInput 
+                                keyboardType='numeric'
+                                onEndEditing={(text)=> {
+                                    var newBlind = text.nativeEvent.text;
+                                    this.setState((state, props) => ({
+                                    ...state,
+                                    Hand: {
+                                        ...state.Hand,
+                                        Blinds: state.Hand.Blinds.map((b, index) => {
+                                            if (index == 1) {
+                                                return newBlind;
+                                            }
+                                            return b;
+                                        })
+                                    }}));
+                                    }}
+                                ref={input => { this.textInput = input }}
+                                />
+                        </View>
+                </View>
+                <View style={styles.horizontal}>
+                    <Text style={styles.txt}>Position: </Text>
                 </View>
                 { this.LineDivider() }
             </View>
@@ -82,8 +146,8 @@ export default class Hand extends React.Component {
         return (
             <View>
                 <View style={styles.horizontal}>
-                    <Text>PreFlop: </Text>
-                    <Button title="+Action" onPress={() => this.GetAction("PreFlop") } />
+                    <Text style={styles.txt}>PreFlop: </Text>
+                    <Button buttonStyle={styles.btn} title="+" onPress={() => this.GetAction("PreFlop") } />
                 </View>
                 <View style={styles.horizontal}>
                     <FlatList
@@ -100,11 +164,11 @@ export default class Hand extends React.Component {
         return (
             <View>
                 <View style={styles.horizontal}>
-                    <Text>Flop: </Text>
+                    <Text style={styles.txt}>Flop: </Text>
                     { this.TouchableCard(this.state.Hand.FlopCards[0], 'flop1')}
                     { this.TouchableCard(this.state.Hand.FlopCards[1], 'flop2')}
                     { this.TouchableCard(this.state.Hand.FlopCards[2], 'flop3')}
-                    <Button title="+Action" onPress={() => this.GetAction("Flop") } />
+                    <Button buttonStyle={styles.btn} title="+" onPress={() => this.GetAction("Flop") } />
                 </View>
                 <View style={styles.horizontal}>
                     <FlatList
@@ -121,9 +185,9 @@ export default class Hand extends React.Component {
         return (
             <View>
                 <View style={styles.horizontal}>
-                    <Text>Turn: </Text>
+                    <Text style={styles.txt}>Turn: </Text>
                     { this.TouchableCard(this.state.Hand.TurnCard, 'turn')}
-                    <Button title="+Action" onPress={() => this.GetAction("Turn") } />
+                    <Button buttonStyle={styles.btn} title="+" onPress={() => this.GetAction("Turn") } />
                 </View>
                 <View style={styles.horizontal}>
                     <FlatList
@@ -140,9 +204,9 @@ export default class Hand extends React.Component {
         return (
             <View>
                 <View style={styles.horizontal}>
-                    <Text>River: </Text>
+                    <Text style={styles.txt}>River: </Text>
                     { this.TouchableCard(this.state.Hand.RiverCard, 'river')}
-                    <Button title="+Action" onPress={() => this.GetAction("River") } />
+                    <Button buttonStyle={styles.btn} title="+" onPress={() => this.GetAction("River") } />
                 </View>
                 <View style={styles.horizontal}>
                     <FlatList
@@ -159,9 +223,11 @@ export default class Hand extends React.Component {
         return (
             <View>
                 <View style={styles.horizontal}>
-                    <Text>Opponents Hand: </Text>
-                    { this.TouchableCard(this.state.Hand.OpponentsCards[0], 'opponent_card_1')}
-                    { this.TouchableCard(this.state.Hand.OpponentsCards[1], 'opponent_card_2')}
+                    <Text style={styles.txt}>Opponents Hand: </Text>
+                    <View style={styles.horizontal}>
+                        { this.TouchableCard(this.state.Hand.OpponentsCards[0], 'opponent_card_1')}
+                        { this.TouchableCard(this.state.Hand.OpponentsCards[1], 'opponent_card_2')}
+                    </View>
                 </View>
                 { this.LineDivider() }
             </View>
@@ -171,8 +237,19 @@ export default class Hand extends React.Component {
         return (
             <View>
                 <View style={styles.notes}>
-                    <Text>Notes:</Text>
-                    <TextInput>Notes</TextInput>
+                    <Text style={styles.txt}>Notes:</Text>
+                    <View style={{borderColor: 'gray', borderWidth: 1, borderRadius: 10}}>
+                        <TextInput style={{fontSize: 16, flex: 1,}} multiline={true} 
+                            onChangeText={(text) => {
+                                this.setState((state, props) => ({
+                                ...state,
+                                Hand: {
+                                    ...state.Hand,
+                                    Notes: text
+                                }
+                                }));
+                        }}>{this.state.Hand.Notes}</TextInput>
+                    </View>
                 </View>
             </View>
         );
@@ -191,7 +268,9 @@ export default class Hand extends React.Component {
     }
     DisplayAction = (action) => {
         return (
-            <Text>{action}</Text>
+            <View style={styles.actionView}>
+                <Text style={styles.actionText}>{action}</Text>
+            </View>
         );
     }
     AddAction = (type, actionString) => {
@@ -380,7 +459,39 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   notes: {
-    margin: 30,
+    marginTop: 20,
+    marginLeft: 20,
     marginBottom: 500,
   },
+  btn: {
+    borderWidth: 1,
+    borderRadius: 12,
+    overflow: 'hidden',
+    padding: 12,
+  },
+  actionView: {
+    flexDirection:'row',
+    backgroundColor: '#d3d3d3',
+    width: "85%", 
+    borderColor: 'gray', 
+    borderWidth: 1, 
+    borderRadius: 10
+  },
+  actionText: {
+    flex: 1,
+    fontSize: 17,
+    paddingLeft: 2,
+  },
+  txt: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    textAlignVertical: 'center'
+  },
+  numberInput: {
+    flex: 10,
+    margin: 15,
+    height: 40,
+    borderColor: '#7a42f4',
+    borderWidth: 1,
+ },
 });

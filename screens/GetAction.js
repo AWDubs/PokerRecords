@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, TextInput, Button, Text } from 'react-native';
+import { StyleSheet, View, TextInput, Text } from 'react-native';
+import { Button } from 'react-native-elements';
 
 
 export default class GetAction extends React.Component {
@@ -36,7 +37,7 @@ export default class GetAction extends React.Component {
             { this.Extras() }
             { this.LineDivider() }
 
-          <Button title="Clear" onPress={() => this.Clear() } style={styles.containerPadding} />
+          <Button type="outline" title="Clear" onPress={() => this.Clear() } style={styles.containerPadding} />
         </View>
       );
     }
@@ -44,25 +45,25 @@ export default class GetAction extends React.Component {
         return (
             <View style={styles.containerPadding}>
                 <View style={styles.horizontal}>
-                    <Button title="I" onPress={() => {
+                    <Button type="outline" title="I" onPress={() => {
                         this.setState((state, props) => ({
                             ...state,
                             FirstPerson: true,
                             }));
                         this.addItem("I ");
                          }} />
-                    <Button title="SB" onPress={() => this.addItem("SB ") } />
-                    <Button title="BB" onPress={() => this.addItem("BB ") } />
-                    <Button title="UTG" onPress={() => this.addItem("UTG ") } />
-                    <Button title="UTG+1" onPress={() => this.addItem("UTG+1 ") } />
-                    <Button title="UTG+2" onPress={() => this.addItem("UTG+2 ") } />
+                    <Button type="outline" title="SB" onPress={() => this.addItem("SB ") } />
+                    <Button type="outline" title="BB" onPress={() => this.addItem("BB ") } />
+                    <Button type="outline" title="UTG" onPress={() => this.addItem("UTG ") } />
+                    <Button type="outline" title="UTG+1" onPress={() => this.addItem("UTG+1 ") } />
+                    <Button type="outline" title="UTG+2" onPress={() => this.addItem("UTG+2 ") } />
                 </View>
                 <View style={styles.horizontal}>
-                    <Button title="UTG+3" onPress={() => this.addItem("UTG+3 ") } />
-                    <Button title="LJ" onPress={() => this.addItem("LJ ") } />
-                    <Button title="HJ" onPress={() => this.addItem("HJ ") } />
-                    <Button title="CO" onPress={() => this.addItem("CO ") } />
-                    <Button title="BTN" onPress={() => this.addItem("BTN ") } />
+                    <Button type="outline" title="UTG+3" onPress={() => this.addItem("UTG+3 ") } />
+                    <Button type="outline" title="LJ" onPress={() => this.addItem("LJ ") } />
+                    <Button type="outline" title="HJ" onPress={() => this.addItem("HJ ") } />
+                    <Button type="outline" title="CO" onPress={() => this.addItem("CO ") } />
+                    <Button type="outline" title="BTN" onPress={() => this.addItem("BTN ") } />
                 </View>
             </View>
         );
@@ -71,10 +72,10 @@ export default class GetAction extends React.Component {
         return (
             <View style={styles.containerPadding}>
                 <View style={styles.horizontal}>
-                    <Button title="checks" onPress={() => this.addVariableItem("checks ", "check ") } />
-                    <Button title="bets" onPress={() => this.addVariableItem("bets ", "bet ") } />
-                    <Button title="raises to" onPress={() => this.addVariableItem("raises to ", "raise to ") } />
-                    <Button title="folds." onPress={() => this.addVariableItem("folds. ", "fold. ") } />
+                    <Button type="outline" title="checks" onPress={() => this.addVariableItem("checks ", "check ") } />
+                    <Button type="outline" title="bets" onPress={() => this.addVariableItem("bets ", "bet ") } />
+                    <Button type="outline" title="raises to" onPress={() => this.addVariableItem("raises to ", "raise to ") } />
+                    <Button type="outline" title="folds." onPress={() => this.addVariableItem("folds. ", "fold. ") } />
                 </View>
             </View>
         );
@@ -99,9 +100,9 @@ export default class GetAction extends React.Component {
     Combos = () => {
         return (
             <View style={styles.containerPadding}>
-                <Button title="Everyone checks" onPress={() => this.addItem("Everyone checks. ") } />
-                <Button title="Everyone folds" onPress={() => this.addItem("Everyone folds. ") } />
-                <Button title="goes all in" onPress={() => this.addVariableItem("goes all in. ", "go all in. ") } />
+                <Button type="outline" title="Everyone checks" onPress={() => this.addItem("Everyone checks. ") } />
+                <Button type="outline" title="Everyone folds" onPress={() => this.addItem("Everyone folds. ") } />
+                <Button type="outline" title="goes all in" onPress={() => this.addVariableItem("goes all in. ", "go all in. ") } />
             </View>
         );
     };
@@ -110,8 +111,8 @@ export default class GetAction extends React.Component {
             <View style={styles.containerPadding}>
                 <View style={styles.centerPadding}>
                     <View style={styles.horizontal}>
-                        <Button title="," onPress={() => this.addItem(", ") } />
-                        <Button title="&" onPress={() => this.addItem("& ") } />
+                        <Button type="outline" title="," onPress={() => this.addItem(", ") } />
+                        <Button type="outline" title="&" onPress={() => this.addItem("& ") } />
                     </View>
                 </View>
             </View>
