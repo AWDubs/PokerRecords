@@ -19,9 +19,9 @@ export function HandObject(_id, _mycards, _stack, _blinds, _position,
     this.PreFlopAction =    _preflopaction,
     this.FlopAction =       _flopaction,
     this.TurnAction =       _turnaction,
-    this.RiverAction =      _riveraction
+    this.RiverAction =      _riveraction,
+    this.NewActionId =      0
 }
-
 
 export default class Hand extends React.Component {
     static navigationOptions = ({navigation, screenProps}) => ({
@@ -136,7 +136,21 @@ export default class Hand extends React.Component {
                         </View>
                 </View>
                 <View style={styles.horizontal}>
-                    <Text style={styles.txt}>Position: </Text>
+                    <Text style={styles.txt}>Position: {this.state.Hand.Position}</Text>
+                </View>
+                <View style={styles.horizontal}>
+                <Button type="outline" title="SB" onPress={() => this.SetPosition("SB") } />
+                    <Button type="outline" title="BB" onPress={() => this.SetPosition("BB") } />
+                    <Button type="outline" title="UTG" onPress={() => this.SetPosition("UTG") } />
+                    <Button type="outline" title="UTG+1" onPress={() => this.SetPosition("UTG+1") } />
+                    <Button type="outline" title="UTG+2" onPress={() => this.SetPosition("UTG+2") } />
+                </View>
+                <View style={styles.horizontal}>
+                    <Button type="outline" title="UTG+3" onPress={() => this.SetPosition("UTG+3") } />
+                    <Button type="outline" title="LJ" onPress={() => this.SetPosition("LJ") } />
+                    <Button type="outline" title="HJ" onPress={() => this.SetPosition("HJ") } />
+                    <Button type="outline" title="CO" onPress={() => this.SetPosition("CO") } />
+                    <Button type="outline" title="BTN" onPress={() => this.SetPosition("BTN") } />
                 </View>
                 { this.LineDivider() }
             </View>
@@ -267,50 +281,90 @@ export default class Hand extends React.Component {
         this.props.navigation.state.params.updateMethod(this.state.Hand); //update store
     }
     DisplayAction = (action) => {
+        const theme = {
+            colors: {
+                primary: 'red',
+              }
+          }
         return (
-            <View style={styles.actionView}>
-                <Text style={styles.actionText}>{action}</Text>
+            <View style={styles.horizontal}>
+                <View style={styles.actionView}>
+                    <Text style={styles.actionText}>{action.ActionString}</Text>
+                </View>
+                <TouchableOpacity
+                onPress={() => this.DeleteAction(action) }>
+                    <View style={styles.actionView2}>
+                        <Text style={[styles.actionText, {fontSize: 20, fontWeight: 'bold', justifyContent: 'center',alignItems: 'center'}]}>-</Text>
+                    </View>
+                </TouchableOpacity>
             </View>
         );
     }
-    AddAction = (type, actionString) => {
-        switch (type) {
-            case "PreFlop":
-                    this.setState((state, props) => ({
-                        ...state,
-                        Hand: {
-                            ...state.Hand,
-                            PreFlopAction: [...state.Hand.PreFlopAction, actionString],
-                        }
-                    }));
-                break;
-            case "Flop":
-                    this.setState((state, props) => ({
-                        ...state,
-                        Hand: {
-                            ...state.Hand,
-                            FlopAction: [...state.Hand.FlopAction, actionString],
-                        }
-                    }));
-                break;
-            case "Turn":
-                    this.setState((state, props) => ({
-                        ...state,
-                        Hand: {
-                            ...state.Hand,
-                            TurnAction: [...state.Hand.TurnAction, actionString],
-                        }
-                    }));
-                break;
-            case "River":
-                    this.setState((state, props) => ({
-                        ...state,
-                        Hand: {
-                            ...state.Hand,
-                            RiverAction: [...state.Hand.RiverAction, actionString],
-                        }
-                    }));
-                break;
+    DeleteAction = (action) => {
+        this.setState((state, props) => ({
+            ...state,
+            Hand: {
+                ...state.Hand,
+                PreFlopAction: state.Hand.PreFlopAction.filter((a) => a.Id !== action.Id),
+                FlopAction: state.Hand.FlopAction.filter((a) => a.Id !== action.Id),
+                TurnAction: state.Hand.TurnAction.filter((a) => a.Id !== action.Id),
+                RiverAction: state.Hand.RiverAction.filter((a) => a.Id !== action.Id),
+            }
+        }));
+    };
+    SetPosition = (newPosition) => {
+        this.setState((state, props) => ({
+            ...state,
+            Hand: {
+                ...state.Hand,
+                Position: newPosition,
+            }
+        }));
+    };
+    AddAction = (type, actionObj) => {
+        if (actionObj.ActionString != '') {
+            switch (type) {
+                case "PreFlop":
+                        this.setState((state, props) => ({
+                            ...state,
+                            Hand: {
+                                ...state.Hand,
+                                PreFlopAction: [...state.Hand.PreFlopAction, actionObj],
+                                NewActionId: state.Hand.NewActionId + 1,
+                            }
+                        }));
+                    break;
+                case "Flop":
+                        this.setState((state, props) => ({
+                            ...state,
+                            Hand: {
+                                ...state.Hand,
+                                FlopAction: [...state.Hand.FlopAction, actionObj],
+                                NewActionId: state.Hand.NewActionId + 1,
+                            }
+                        }));
+                    break;
+                case "Turn":
+                        this.setState((state, props) => ({
+                            ...state,
+                            Hand: {
+                                ...state.Hand,
+                                TurnAction: [...state.Hand.TurnAction, actionObj],
+                                NewActionId: state.Hand.NewActionId + 1,
+                            }
+                        }));
+                    break;
+                case "River":
+                        this.setState((state, props) => ({
+                            ...state,
+                            Hand: {
+                                ...state.Hand,
+                                RiverAction: [...state.Hand.RiverAction, actionObj],
+                                NewActionId: state.Hand.NewActionId + 1,
+                            }
+                        }));
+                    break;
+                }
         }
     };
     OnCardClick = (type) => {
@@ -428,6 +482,7 @@ export default class Hand extends React.Component {
         this.props.navigation.navigate('GetAction', {
             Type: type,
             AddAction: this.AddAction.bind(this),
+            Id: this.state.Hand.NewActionId,
           });
     };
 }
@@ -472,7 +527,16 @@ const styles = StyleSheet.create({
   actionView: {
     flexDirection:'row',
     backgroundColor: '#d3d3d3',
-    width: "85%", 
+    flex: 9,
+    borderColor: 'gray', 
+    borderWidth: 1, 
+    borderRadius: 10
+  },
+  actionView2: {
+    flex: 1,
+    width: 15,
+    flexDirection:'row',
+    backgroundColor: '#ff0000',
     borderColor: 'gray', 
     borderWidth: 1, 
     borderRadius: 10

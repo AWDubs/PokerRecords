@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, View, Text, FlatList, TextInput} from 'react-native';
+import { StyleSheet, View, Text, FlatList, TextInput, Alert, Button} from 'react-native';
 import { Card, CardItem, Right, DatePicker } from 'native-base';
-import { Button } from 'react-native-elements';
+
 import { HandObject } from './Hand';
 import _Card from '../CardGrabber';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -127,7 +127,7 @@ export default class Session extends React.Component {
             <View style={{alignSelf: 'flex-start', paddingLeft: 10}}>
               <Text style={styles.textStyle}>Hands: {this.state.Session.HandList.length}</Text>
             </View>
-            <View style={{alignSelf: 'flex-end', paddingRight: 10}}>
+            <View style={{paddingRight: 20}}>
                 <Button title="New Hand" onPress={() => this.addItem() } />
             </View>
         </View>
@@ -159,24 +159,45 @@ export default class Session extends React.Component {
     };
     HandComponent = (hand) => {
         return (
-          <View>
-          <TouchableOpacity 
-            onPress={() => { this.NavigateToNextScreen(hand) }}>
-            <Card>
-              <CardItem>
-                <Text>{'Hand ' + hand.Id.toString()}</Text>
-                <Right>
-                  <View style={styles.horizontal}>
-                    { _Card(hand.MyCards[0]) }
-                    { _Card(hand.MyCards[1]) }
-                  </View>
-                </Right>
-              </CardItem>
-            </Card>
-          </TouchableOpacity>
+          <View style={[styles.horizontal,{width: "95%"}]}>
+            <View style={{flex: 9}}>
+              <TouchableOpacity 
+                onPress={() => { this.NavigateToNextScreen(hand) }}>
+                <Card>
+                  <CardItem>
+                    <Text>{'Hand ' + hand.Id.toString()}</Text>
+                    <Right>
+                      <View style={styles.horizontal}>
+                        { _Card(hand.MyCards[0]) }
+                        { _Card(hand.MyCards[1]) }
+                      </View>
+                    </Right>
+                  </CardItem>
+                </Card>
+              </TouchableOpacity>
+            </View>
+            <View style={{height: 50, paddingTop: 30}}>
+              <Button title="X" color="#ff0000" onPress={ () => this.DeleteHand(hand) }></Button>
+            </View>
           </View>
         );
-      };
+    };
+    DeleteHand = (hand) => {
+        Alert.alert(
+          'Are you sure?',
+          "This will permanently delete the Hand and all of it's data",
+          [
+            {text: 'NO'},
+            {text: 'YES', onPress: () => this.setState((state, props) => ({
+              ...state,
+              Session: {
+                ...state.Session,
+                 HandList: state.Session.HandList.filter((h) => h.Id !== hand.Id)
+             }
+           }))},
+          ],
+        );
+    };
     LineDivider = () => {
         if (!this.state.EditMode) {
           return (

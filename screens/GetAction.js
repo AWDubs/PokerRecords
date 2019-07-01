@@ -2,6 +2,10 @@ import React from 'react';
 import { StyleSheet, View, TextInput, Text } from 'react-native';
 import { Button } from 'react-native-elements';
 
+export function ActionObject(_id, _actionString) {
+this.Id = _id,
+this.ActionString = _actionString
+}
 
 export default class GetAction extends React.Component {
     static navigationOptions =  ({navigation, screenProps}) => ({
@@ -10,7 +14,10 @@ export default class GetAction extends React.Component {
         ),
       })
   state = {
-    Action: "",
+    Action: {
+        Id:  this.props.navigation.state.params.Id,
+        ActionString: '',
+        },
     FirstPerson: false,
   }
   render() {
@@ -19,7 +26,7 @@ export default class GetAction extends React.Component {
           <TextInput 
             onChangeText={(text)=> this.addItem(text)}
             placeholder="Select Action">
-          {this.state.Action}</TextInput>
+          {this.state.Action.ActionString}</TextInput>
             { this.LineDivider() }
             
             { this.Nouns() }
@@ -139,16 +146,23 @@ export default class GetAction extends React.Component {
     addItem = (stringToAdd) => {
         this.setState((state, props) => ({
             ...state,
-            Action : state.Action + stringToAdd,
+            Action: {
+                ...state.Action,
+                ActionString : state.Action.ActionString + stringToAdd,
+            } 
         }))
     };
     Clear = () => {
         this.setState((state, props) => ({
             ...state,
-            Action : "",
+            Action: {
+                ...state.Action,
+                ActionString : '',
+            } 
         }))
     };
     componentWillUnmount() {
+        this.props.navigation.state.params.Id,
         this.props.navigation.state.params.AddAction(this.props.navigation.state.params.Type, this.state.Action); //update store
     };
 }
