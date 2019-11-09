@@ -5,6 +5,7 @@ import { SessionObject } from './Session';
 import { Card, CardItem, Fab, Separator } from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Icon } from 'react-native-elements';
+import { WebView } from 'react-native-webview';
 //NativeBase, FirstBorn
 
 class Home extends React.Component {
@@ -17,6 +18,7 @@ class Home extends React.Component {
         <View style={{height: 24}}></View>
           <View style={styles.horizontal}>
           <Image source={require('../cards/PokerRecords.png')} style={styles.imageStyle}/>
+          
           <Image source={require('../cards/record.png')} style={styles.imageStyle}/>
           </View>
           <View style={{flex: .3,}}>
